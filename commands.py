@@ -92,7 +92,7 @@ class TVMAccessRuntimeAttr(gdb.Command):
         print("access string '"+object_access_str+"'")
         try:
             attribute_type = gdb.execute('tvm_type '+object, to_string=True).strip()
-            print("Type of final object: '"+attribute_type+"'")
+            print("Type of object: '"+attribute_type+"'")
         except:
             pass
         try:
