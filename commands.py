@@ -142,7 +142,7 @@ class TVMFields(gdb.Command):
 
     def invoke(self, args, from_tty):
         arg_list = args.split('.')
-        print(get_attribute_fields(arg_list))
+        print("\t".join(get_attribute_fields(arg_list)))
 
     def complete(self, text, word):
         return gdb.COMPLETE_SYMBOL
