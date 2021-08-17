@@ -1,7 +1,8 @@
 ## This is a small gdb extension that introduces a few gdb commands to be used in the [TVM Project](https://github.com/apache/tvm)
 
-There are 3 major commands introduced in this extension.
+There are 4 commands introduced in this extension.
 
+#### tvm_dump
 **`tvm_dump`** - Calls `p tvm::Dump(<value>)` for a given value
 
 Eg:
@@ -10,8 +11,10 @@ Eg:
 (((j.outer*64) + (i*n)) + j.inner)
 ```
 
-**`tvm_type`** - Prints the original object type of a given value. When a function gets a PrimExpr as argument, this commands prints which sub-class of PrimExpr the given value is. This is in same spirit to whatis command in gdb
-For example, AddNode could be the underlying original type of the object, declared using it's parent PrimExprNode
+#### tvm_type
+
+**`tvm_type`** - Prints the original object type of a given value. When a function gets a `PrimExpr` as argument, this commands prints which sub-class of `PrimExpr` the given value is. This is in same spirit to whatis command in gdb
+For example, `AddNode` could be the underlying original type of the object, declared using it's parent `PrimExprNode`
 
 Usage:
 ```c++
@@ -21,7 +24,8 @@ type = tvm::PrimExpr
 tvm::tir::AddNode
 ```
 
-**`tvm_attr`** - This commmand extends the use of tvm_type and tries to access the underlying attributes/members of the original object.
+#### tvm_attr
+**`tvm_attr`** - This commmand extends the use of `tvm_type` and tries to access the underlying attributes/members of the original object.
 For example, AddNode has the members `a` and `b`, so this allows us to access those members.
 
 This prints out 3 lines, where the first line shows the access string used to access the member, second line shows the type of the object, and the last line prints a dump of the object
@@ -42,6 +46,7 @@ Type of object: 'tvm::IntImmNode'
 64
 ```
 
+#### tvm_fields
 **`tvm_fields`** - This command prints the list of fields available in the given object/object.attributes. This can be called with either a single object, or the object.attr.attr syntax
 
 > Note: The fields can also be directly found by <tab> completion when using the `tvm_attr` command, but there are some gotchas in that method, especially when trying completion more than once, so this command was written to help with that.

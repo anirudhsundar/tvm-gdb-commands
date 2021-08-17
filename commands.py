@@ -64,6 +64,9 @@ This command will try to access the deleter from ObjectRefs using value.get().de
         extract_type_re = re.compile(".*tvm::runtime::.*Handler<(.*)>::Deleter_.*")
         for arg in arg_list:
             deleter_typestring = ""
+            # I haven't found an easy way to determine whether the get()
+            # member is available, and hence this ugly trick using
+            # try-except
             try:
                 deleter_typestring = gdb.execute('print *'+arg+'.get().deleter_', to_string=True)
             except gdb.error:
@@ -117,6 +120,7 @@ class TVMAccessRuntimeAttr(gdb.Command):
         try:
             gdb.execute('tvm_dump '+object_access_str, to_string=True)
         except gdb.error:
+            # If the tvm_dump command fails for any reason, we just print it
             gdb.execute('print '+object_access_str)
 
     def complete(self, text, word):
