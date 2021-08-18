@@ -41,6 +41,17 @@ access string '((tvm::tir::MulNode*)((tvm::tir::AddNode*)((tvm::tir::AddNode*)in
 Type of object: 'tvm::IntImmNode'
 64
 ```
+
+**`tvm_fields`** - This command prints the list of fields available in the given object/object.attributes. This can be called with either a single object, or the object.attr.attr syntax
+
+> Note: The fields can also be directly found by <tab> completion when using the `tvm_attr` command, but there are some gotchas in that method, especially when trying completion more than once, so this command was written to help with that.
+
+For example:
+```c++
+(gdb) tvm_fields index.a.a
+tvm::PrimExprNode       a       b       _type_final     _type_child_slots
+```
+
 ### Installation
 
 The simplest way to install the plugin is to source the commands.py file, either directly in your gdb session or adding the below line to your `.gdbinit`

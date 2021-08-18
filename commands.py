@@ -1,6 +1,34 @@
 import gdb
 import re
 
+def get_object_access_str(arg_list):
+    object = arg_list[0]
+    attr_list = arg_list[1:]
+    object_access_str = object
+    for attr in attr_list:
+        type = gdb.execute('tvm_type '+object, to_string=True).strip()
+        if 'GDB Error' in type or len(type) == 0:
+            print("GDB Error: Could not extract type")
+        else:
+            object_access_str = "(("+type+"*)"+object+")."+attr
+            object = object_access_str
+    return object_access_str
+
+def get_attribute_fields(arg_list):
+    if len(arg_list) == 1:
+        object_access_str = arg_list[0]
+    object_access_str = get_object_access_str(arg_list)
+    try:
+        attribute_type = gdb.execute('tvm_type '+object_access_str, to_string=True).strip()
+        if attribute_type in ['tvm::tir::AddNode', 'tvm::tir::SubNode', 'tvm::tir::MulNode']:
+            attribute_type = 'tvm::tir::BinaryOpNode<'+attribute_type+'>'
+        attribute_type = gdb.lookup_type(attribute_type)
+        attribute_fields = attribute_type.fields()
+        attribute_fields = [x.name for x in attribute_fields]
+        return attribute_fields
+    except gdb.error:
+        return []
+
 class TVMDump(gdb.Command):
     """Call tvm::Dump on the passed argument for easy printing"""
 
@@ -79,32 +107,48 @@ class TVMAccessRuntimeAttr(gdb.Command):
         arg_list = args.split('.')
         if len(arg_list) < 2:
             print("GDB Error: Please pass an <object> and list of attributes separated by '.' See 'help tvm_attr' for more details")
-        object = arg_list[0]
-        attr_list = arg_list[1:]
-        object_access_str = ""
-        for attr in attr_list:
-            type = gdb.execute('tvm_type '+object, to_string=True).strip()
-            if 'GDB Error' in type or len(type) == 0:
-                print("GDB Error: Could not extract type")
-            else:
-                object_access_str = "(("+type+"*)"+object+")."+attr
-                object = object_access_str
+        object_access_str = get_object_access_str(arg_list)
         print("access string '"+object_access_str+"'")
         try:
-            attribute_type = gdb.execute('tvm_type '+object, to_string=True).strip()
+            attribute_type = gdb.execute('tvm_type '+object_access_str, to_string=True).strip()
             print("Type of object: '"+attribute_type+"'")
         except:
-            pass
+            pass # this try-except is technically not needed, but I found some problems with different versions of gdb
         try:
             gdb.execute('tvm_dump '+object_access_str, to_string=True)
         except gdb.error:
-            gdb.execute('p '+object_access_str)
+            gdb.execute('print '+object_access_str)
+
+    def complete(self, text, word):
+        if text[-1] == ".":
+            text = text[:-1]
+        arg_list = text.split('.')
+        return get_attribute_fields(arg_list)
+
+class TVMFields(gdb.Command):
+    """Print the available fields of the passed in object.
+    Example usage:
+        tvm_fields index.a
+
+    Output:
+        tvm::PrimExprNode       a       b       _type_final     _type_child_slots
+
+    """
+
+    def __init__(self):
+        super(TVMFields, self).__init__(
+            "tvm_fields", gdb.COMMAND_USER
+        )
+
+    def invoke(self, args, from_tty):
+        arg_list = args.split('.')
+        print(get_attribute_fields(arg_list))
 
     def complete(self, text, word):
         return gdb.COMPLETE_SYMBOL
 
-
 TVMDump()
 TVMGetDerivedType()
 TVMAccessRuntimeAttr()
+TVMFields()
 
