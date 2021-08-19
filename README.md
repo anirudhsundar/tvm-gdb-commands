@@ -57,6 +57,12 @@ For example:
 tvm::PrimExprNode       a       b       _type_final     _type_child_slots
 ```
 
+### Installation
+
+The simplest way to install the plugin is to source the commands.py file, either directly in your gdb session or adding the below line to your `.gdbinit`
+
+`source /path/to/commands.py`
+
 ### Other Tips
 
 I set the names for all these commands with tvm_* prefix even though it's not too convenient to type so that it won't collide with other gdb commands. One could potentially create a list of aliases for these to save some typing. I personally use the below set of aliases.
@@ -67,12 +73,6 @@ alias tvt = tvm_type
 alias tvat = tvm_attr
 alias tvf = tvm_fields
 ```
-
-### Installation
-
-The simplest way to install the plugin is to source the commands.py file, either directly in your gdb session or adding the below line to your `.gdbinit`
-
-`source /path/to/commands.py`
 
 ### Contributions
 
