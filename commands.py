@@ -1,33 +1,36 @@
 import gdb
 import re
 
-def get_object_access_str(arg_list):
-    object = arg_list[0]
-    attr_list = arg_list[1:]
-    object_access_str = object
-    for attr in attr_list:
-        type = gdb.execute('tvm_type '+object, to_string=True).strip()
-        if 'GDB Error' in type or len(type) == 0:
-            print("GDB Error: Could not extract type")
-        else:
-            object_access_str = "(("+type+"*)"+object+")."+attr
-            object = object_access_str
-    return object_access_str
+class TVMUtils:
+    @staticmethod
+    def get_object_access_str(arg_list):
+        object = arg_list[0]
+        attr_list = arg_list[1:]
+        object_access_str = object
+        for attr in attr_list:
+            type = gdb.execute('tvm_type '+object, to_string=True).strip()
+            if 'GDB Error' in type or len(type) == 0:
+                print("GDB Error: Could not extract type")
+            else:
+                object_access_str = "(("+type+"*)"+object+")."+attr
+                object = object_access_str
+        return object_access_str
 
-def get_attribute_fields(arg_list):
-    if len(arg_list) == 1:
-        object_access_str = arg_list[0]
-    object_access_str = get_object_access_str(arg_list)
-    try:
-        attribute_type = gdb.execute('tvm_type '+object_access_str, to_string=True).strip()
-        if attribute_type in ['tvm::tir::AddNode', 'tvm::tir::SubNode', 'tvm::tir::MulNode']:
-            attribute_type = 'tvm::tir::BinaryOpNode<'+attribute_type+'>'
-        attribute_type = gdb.lookup_type(attribute_type)
-        attribute_fields = attribute_type.fields()
-        attribute_fields = [x.name for x in attribute_fields]
-        return attribute_fields
-    except gdb.error:
-        return []
+    @staticmethod
+    def get_attribute_fields(arg_list):
+        if len(arg_list) == 1:
+            object_access_str = arg_list[0]
+        object_access_str = TVMUtils.get_object_access_str(arg_list)
+        try:
+            attribute_type = gdb.execute('tvm_type '+object_access_str, to_string=True).strip()
+            if attribute_type in ['tvm::tir::AddNode', 'tvm::tir::SubNode', 'tvm::tir::MulNode']:
+                attribute_type = 'tvm::tir::BinaryOpNode<'+attribute_type+'>'
+            attribute_type = gdb.lookup_type(attribute_type)
+            attribute_fields = attribute_type.fields()
+            attribute_fields = [x.name for x in attribute_fields]
+            return attribute_fields
+        except gdb.error:
+            return []
 
 class TVMDump(gdb.Command):
     """Call tvm::Dump on the passed argument for easy printing"""
@@ -45,7 +48,7 @@ class TVMDump(gdb.Command):
     def complete(self, text, word):
         return gdb.COMPLETE_SYMBOL
 
-class TVMGetDerivedType(gdb.Command):
+class TVMGetDerivedType(gdb.Command, TVMUtils):
     """
 Extract the original type stored of the object
 This command will try to access the deleter from ObjectRefs using value.get().deleter_ and from Objects using value.deleter_. If it both fails it throws an error
@@ -84,7 +87,7 @@ This command will try to access the deleter from ObjectRefs using value.get().de
     def complete(self, text, word):
         return gdb.COMPLETE_SYMBOL
 
-class TVMAccessRuntimeAttr(gdb.Command):
+class TVMAccessRuntimeAttr(gdb.Command, TVMUtils):
     """Try to access the attributes of the Object by casting to the correct type. This command can be used as 'tvm_type <object>.<attributes>' and it tries to access the <attributes> from the <object> recursively by finding the types for each object
     Example usage (when accessing 'index' attribute of 'op' object which is of type 'LoadNode'):
         tvm_attr op index
@@ -110,7 +113,7 @@ class TVMAccessRuntimeAttr(gdb.Command):
         arg_list = args.split('.')
         if len(arg_list) < 2:
             print("GDB Error: Please pass an <object> and list of attributes separated by '.' See 'help tvm_attr' for more details")
-        object_access_str = get_object_access_str(arg_list)
+        object_access_str = TVMUtils.get_object_access_str(arg_list)
         print("access string '"+object_access_str+"'")
         try:
             attribute_type = gdb.execute('tvm_type '+object_access_str, to_string=True).strip()
@@ -127,9 +130,9 @@ class TVMAccessRuntimeAttr(gdb.Command):
         if text[-1] == ".":
             text = text[:-1]
         arg_list = text.split('.')
-        return get_attribute_fields(arg_list)
+        return TVMUtils.get_attribute_fields(arg_list)
 
-class TVMFields(gdb.Command):
+class TVMFields(gdb.Command, TVMUtils):
     """Print the available fields of the passed in object.
     Example usage:
         tvm_fields index.a
@@ -146,7 +149,7 @@ class TVMFields(gdb.Command):
 
     def invoke(self, args, from_tty):
         arg_list = args.split('.')
-        print("\t".join(get_attribute_fields(arg_list)))
+        print("\t".join(TVMUtils.get_attribute_fields(arg_list)))
 
     def complete(self, text, word):
         return gdb.COMPLETE_SYMBOL

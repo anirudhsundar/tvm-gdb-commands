@@ -39,7 +39,7 @@ Type of object: 'tvm::tir::AddNode'
 
 This command can also take attributes recursively
 For example:
-```c+++
+```c++
 (gdb) tvm_attr index.a.a.b
 access string '((tvm::tir::MulNode*)((tvm::tir::AddNode*)((tvm::tir::AddNode*)index).a).a).b'
 Type of object: 'tvm::IntImmNode'
@@ -57,9 +57,28 @@ For example:
 tvm::PrimExprNode       a       b       _type_final     _type_child_slots
 ```
 
+### Other Tips
+
+I set the names for all these commands with tvm_* prefix even though it's not too convenient to type so that it won't collide with other gdb commands. One could potentially create a list of aliases for these to save some typing. I personally use the below set of aliases.
+
+```c++
+alias tvd = tvm_dump
+alias tvt = tvm_type
+alias tvat = tvm_attr
+alias tvf = tvm_fields
+```
+
 ### Installation
 
 The simplest way to install the plugin is to source the commands.py file, either directly in your gdb session or adding the below line to your `.gdbinit`
 
 `source /path/to/commands.py`
+
+### Contributions
+
+Always welcome.
+
+### Acknowledgements
+
+Thanks to [Lunderberg](https://github.com/Lunderberg/) for valuable feedback and whose [tvm-gdb-extension](https://github.com/Lunderberg/tvm-gdb-extension) was the inspiration to create this one
 
