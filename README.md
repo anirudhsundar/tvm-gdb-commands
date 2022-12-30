@@ -4,15 +4,13 @@ This extension adds 4 new commands to gdb that improve the experience of debuggi
 
 ### Installation
 
-Run the below bash text or download and run the `install.sh` script.
+Run the below command
 
 ```bash
-mkdir -p $HOME/.gdb/tvm-gdb-commands
-curl -L https://raw.githubusercontent.com/anirudhsundar/tvm-gdb-commands/master/commands.py > $HOME/.gdb/tvm-gdb-commands/commands.py
-touch $HOME/.gdbinit
-echo "source $HOME/.gdb/tvm-gdb-commands/commands.py" >> $HOME/.gdbinit
+bash < <(curl -s https://raw.githubusercontent.com/anirudhsundar/tvm-gdb-commands/master/install.sh)
 ```
-Alternatively, source the `commands.py` file, either directly in your gdb session or download the `commands.py` to some location and add the below line to your `.gdbinit`
+
+Alternatively, download the `commands.py` to some location and source the `commands.py` file, either directly in your gdb session or add the below line to your `.gdbinit`
 
 `source /path/to/commands.py`
 
