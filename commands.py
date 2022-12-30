@@ -49,8 +49,7 @@ class TVMDump(gdb.Command):
         return gdb.COMPLETE_SYMBOL
 
 class TVMGetDerivedType(gdb.Command, TVMUtils):
-    """
-Extract the original type stored of the object
+    """ Extract the original type of the object when base type is passed
 This command will try to access the deleter from ObjectRefs using value.get().deleter_ and from Objects using value.deleter_. If it both fails it throws an error
 
     Note: The way this is done currently involves a hack to extract the type present as part of the Object's Deleter_
@@ -88,7 +87,8 @@ This command will try to access the deleter from ObjectRefs using value.get().de
         return gdb.COMPLETE_SYMBOL
 
 class TVMAccessRuntimeAttr(gdb.Command, TVMUtils):
-    """Try to access the attributes of the Object by casting to the correct type. This command can be used as 'tvm_type <object>.<attributes>' and it tries to access the <attributes> from the <object> recursively by finding the types for each object
+    """Access the attributes of the underlying type
+Try to access the attributes of the Object by casting to the correct type. This command can be used as 'tvm_type <object>.<attributes>' and it tries to access the <attributes> from the <object> recursively by finding the types for each object
     Example usage (when accessing 'index' attribute of 'op' object which is of type 'LoadNode'):
         tvm_attr op index
 
@@ -159,3 +159,8 @@ TVMGetDerivedType()
 TVMAccessRuntimeAttr()
 TVMFields()
 
+# Comment out the below lines if you wish to remove the aliases and your own
+gdb.execute("alias tvd = tvm_dump")
+gdb.execute("alias tvt = tvm_type")
+gdb.execute("alias tvat = tvm_attr")
+gdb.execute("alias tvf = tvm_fields")
