@@ -23,7 +23,7 @@ Alternatively, download the `commands.py` to some location and source the `comma
 
 Eg:
 ```c++
-(gdb) tvm_dump index
+(gdb) tvd index
 (((j.outer*64) + (i*n)) + j.inner)
 ```
 
@@ -39,7 +39,7 @@ Usage:
 ```c++
 (gdb) whatis index
 type = tvm::PrimExpr
-(gdb) tvm_type index
+(gdb) tvt index
 tvm::tir::AddNode
 ```
 
@@ -53,7 +53,7 @@ For example, AddNode has the members `a` and `b`, so this allows us to access th
 This prints out 3 lines, where the first line shows the access string used to access the member, second line shows the type of the object, and the last line prints a dump of the object
 
 ```c++
-(gdb) tvm_attr index.a
+(gdb) tvat index.a
 access string '((tvm::tir::AddNode*)index).a'
 Type of object: 'tvm::tir::AddNode'
 ((j.outer*64) + (i*n))
@@ -62,7 +62,7 @@ Type of object: 'tvm::tir::AddNode'
 This command can also take attributes recursively
 For example:
 ```c++
-(gdb) tvm_attr index.a.a.b
+(gdb) tvat index.a.a.b
 access string '((tvm::tir::MulNode*)((tvm::tir::AddNode*)((tvm::tir::AddNode*)index).a).a).b'
 Type of object: 'tvm::IntImmNode'
 64
@@ -77,7 +77,7 @@ Type of object: 'tvm::IntImmNode'
 
 For example:
 ```c++
-(gdb) tvm_fields index.a.a
+(gdb) tvf index.a.a
 tvm::PrimExprNode       a       b       _type_final     _type_child_slots
 ```
 
