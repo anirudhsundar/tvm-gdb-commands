@@ -1,3 +1,5 @@
+# TVM specific GDB commands and LLDB debugging configuration in VSCode​
+
 ## 1. TVM specific GDB commands
 
 This extension adds 4 new commands to gdb that improve the experience of debugging the [Apache TVM](https://tvm.apache.org/) code. The commands are explained below with examples.
@@ -97,7 +99,7 @@ This extension adds 4 new commands to gdb that improve the experience of debuggi
     alias tvf = tvm_fields
     ```
 
-## 2. Hybrid Python + C++ Debugging with LLDB in VSCode​
+## 2. LLDB debugging configuration in VSCode​
 
 The `.vscode/launch.json` configuration enables hybrid debugging of TVM's Python frontend (Python debugger) and C++ backend (LLDB) in VSCode.
 
@@ -108,7 +110,7 @@ The `.vscode/launch.json` configuration enables hybrid debugging of TVM's Python
 
 Before using this configuration to debug TVM, we should install the following extensions for VSCode:
 
- - [CodeLLDB](https://marketplace.visualstudio.com/items?itemName=vadimcn.vscode-lldb): Search`vadimcn.vscode-lldb` in VSCode extension marketplace.
+ - [CodeLLDB](https://marketplace.visualstudio.com/items?itemName=vadimcn.vscode-lldb): Search `vadimcn.vscode-lldb` in VSCode extension marketplace.
  - [​Python C++ Debugger​​](https://marketplace.visualstudio.com/items?itemName=benjamin-simmonds.pythoncpp-debug): Search `benjamin-simmonds.pythoncpp-debug` in VSCode extension marketplace.
 
 After installing the extensions, we should copy the `.vscode/launch.json` file to the root directory of your own project. And the next steps will explain some details that you should modify in the `launch.json` file.
