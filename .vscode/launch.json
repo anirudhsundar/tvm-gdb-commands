@@ -9,7 +9,8 @@
          *      the Python script first, and then the C++ process is automatically
          *      attached to.
          * Note:
-         *   - Requires `vadimcn.vscode-lldb` (CodeLLDB) extension for C++ debugging.
+         *   - Requires `benjamin-simmonds.pythoncpp-debug` (Python C++ Debugger)
+         *     and `vadimcn.vscode-lldb` (CodeLLDB) extension for C++ debugging.
          *   - The following 1.1 and 1.2 configurations are subordinate to this configuration.
          */
         {
@@ -25,7 +26,7 @@
          */
         {
             "name": "Python: TVM Frontend",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
