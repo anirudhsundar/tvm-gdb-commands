@@ -1,0 +1,76 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        /* 
+         * Configuration 1: Hybrid Python + C++ Debugging for TVM.
+         * Purpose: Debug both Python frontend and C++ backend simultaneously.
+         * Mechanism: Launches Python script while attaching to C++ process.
+         * Use: This is a hybrid debugging approach, where users should launch
+         *      the Python script first, and then the C++ process is automatically
+         *      attached to.
+         * Note:
+         *   - Requires `benjamin-simmonds.pythoncpp-debug` (Python C++ Debugger)
+         *     and `vadimcn.vscode-lldb` (CodeLLDB) extension for C++ debugging.
+         *   - The following 1.1 and 1.2 configurations are subordinate to this configuration.
+         */
+        {
+            "name": "Full Auto Debug (Python+C++)",
+            "type": "pythoncpp",
+            "request": "launch",
+            "pythonLaunchName": "Python: TVM Frontend",
+            "cppAttachName": "C++: TVM Backend",
+        },
+        /*
+         * Configuration 1.1: Python Frontend Debugger.
+         * Purpose: Debug Python components of TVM.
+         */
+        {
+            "name": "Python: TVM Frontend",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "purpose": [
+                "debug-in-terminal"
+            ],
+            "args": [],
+            "env": {},
+            "gevent": false
+        },
+        /*
+         * Configuration 1.2: C++ Backend Attach Debugger.
+         * Purpose: Debug TVM's C++ runtime.
+         * Note:
+         *   - Customize `"program"` entry to your venv python executable path.
+         */
+        {
+            "name": "C++: TVM Backend",
+            "type": "lldb",
+            "request": "attach",
+            // Customize this to your venv python executable path
+            "program": "/opt/homebrew/Caskroom/miniconda/base/envs/tvm-build-venv/bin/python",
+            "pid": "${command:pickProcess}",
+        },
+        /*
+         * Configuration 2: Pure C++ Debugging.
+         * Purpose: Debug standalone C++ executables.
+         * Use: When testing C++ components without Python
+         * Note:
+         *   - Customize `"program"` entry to your C++ executable path.
+         */
+        {
+            "name": "Pure C++ Debug",
+            "type": "lldb",
+            "request": "launch",
+            // Customize this to your executable path
+            "program": "${workspaceFolder}/build/oottvm_test",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "env": {
+                "EXAMPLEKEY": "EXAMPLEVALUE"
+            },
+        }
+    ],
+}
